@@ -11,7 +11,7 @@ for arch in ${ARCH:-aarch64 ppc64le x86_64} ; do
 		*) qemuarch=${fedoraarch} ;;
 	esac
 	buildcontext=${BUILDCONTEXT:-/buildcontext}
-	buildoutput=${BUILDOUTPUT:-/buildoutput/${arch}}
+	buildoutput=${BUILDOUTPUT:-/buildoutput}
 	dockerfile=${DOCKERFILE:-Dockerfile}
 	iso=${tmpdir}/cloud-init.iso
 	case ${qemuarch} in
@@ -19,7 +19,7 @@ for arch in ${ARCH:-aarch64 ppc64le x86_64} ; do
 		*) machineargs="" ;;
 	esac
 
-	mkdir -p ${workdir}/cloud-init ${buildoutput}/${fedoraarch}
+	mkdir -p ${workdir}/cloud-init ${buildoutput}
 
 	tee ${workdir}/cloud-init/meta-data <<- EOF
 	instance-id: ${uuid}-${fedoraarch}
@@ -32,7 +32,7 @@ for arch in ${ARCH:-aarch64 ppc64le x86_64} ; do
 	chpasswd: { expire: false }
 	runcmd:
 	  - [ setenforce, 0 ]
-	  - [ mkdir, -p, /buildcontext, /buildoutput/${arch} ]
+	  - [ mkdir, -p, /buildcontext, /buildoutput ]
 	  - [ mount, -t, 9p, -o, trans=virtio, context, /buildcontext ]
 	  - [ mount, -t, 9p, -o, trans=virtio, output,  /buildoutput ]
 	  - [ mount ]
