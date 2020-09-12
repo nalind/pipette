@@ -10,8 +10,8 @@ for arch in ${ARCH:-aarch64 ppc64le x86_64} ; do
 		ppc64le) qemuarch=ppc64 ;;
 		*) qemuarch=${fedoraarch} ;;
 	esac
-	buildcontext=/buildcontext
-	buildoutput=/buildoutput/${arch}
+	buildcontext=${BUILDCONTEXT:-/buildcontext}
+	buildoutput=${BUILDOUTPUT:-/buildoutput/${arch}}
 	dockerfile=${DOCKERFILE:-Dockerfile}
 	iso=${tmpdir}/cloud-init.iso
 	case ${qemuarch} in
