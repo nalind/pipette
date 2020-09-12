@@ -5,11 +5,11 @@ trap 'rm -fr ${tmpdir}' EXIT
 
 uuid=$(uuidgen)
 
-# for arch in aarch64 s390x x86_64; do
-for arch in aarch64 ; do
+# for arch in aarch64 ppc64le s390x x86_64; do
+for arch in x86_64   ; do
 	fedoraarch=${arch}
 	case ${fedoraarch} in
-		ppc64) qemuarch=ppc64le ;;
+		ppc64le) qemuarch=ppc64 ;;
 		*) qemuarch=${fedoraarch} ;;
 	esac
 	buildcontext=${1:-$(pwd)}
@@ -18,7 +18,8 @@ for arch in aarch64 ; do
 	iso=${tmpdir}/cloud-init.iso
 	machineargs=
 	case ${qemuarch} in
-		aarch64) machineargs="--machine virt,gic-version=max,pflash0=edk-efi -drive file=/usr/share/edk2/aarch64/QEMU_EFI-pflash.raw,node-name=edk-efi,read-only=on,index=1 -cpu max";;
+		aarch64) machineargs="--machine virt,gic-version=2,pflash0=edk-efi -drive file=/usr/share/edk2/aarch64/QEMU_EFI-pflash.raw,node-name=edk-efi,read-only=on,index=1 -cpu max";;
+		s390x) machineargs="-cpu qemu,zpci=on";;
 		*) machineargs="" ;;
 	esac
 
@@ -47,12 +48,12 @@ for arch in aarch64 ; do
 	mkisofs -o ${iso} -input-charset default -volid cidata -J -r ${tmpdir}/cloud-init
 
 	qemu-system-${qemuarch} -m 1536 ${machineargs} -smp sockets=2,cores=2 -snapshot \
-		-device virtio-9p-device,fsdev=output,mount_tag=output \
+		-device virtio-9p-pci,fsdev=output,mount_tag=output \
 		-fsdev local,path=${buildoutput},id=output,security_model=none \
-		-device virtio-9p-device,fsdev=context,mount_tag=context \
+		-device virtio-9p-pci,fsdev=context,mount_tag=context \
 		-fsdev local,path=${buildcontext},id=context,security_model=none,readonly \
 		-sandbox on,obsolete=deny,elevateprivileges=deny,spawn=deny,resourcecontrol=deny \
-		-device virtio-rng-pci -uuid ${uuid} -rtc base=utc -msg timestamp=on \
+		-usb -uuid ${uuid} -rtc base=utc -msg timestamp=on \
 		-hda /var/lib/libvirt/images/iso/Fedora-Cloud-Base-32-1.6.${fedoraarch}.qcow2 -cdrom ${iso}
 
 	skopeo inspect --config dir:${buildoutput}/image | jq
