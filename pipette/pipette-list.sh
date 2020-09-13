@@ -2,7 +2,7 @@
 set -ex
 export STORAGE_DRIVER=vfs
 mkdir -p /buildoutput/list
-buildah create manifest list
+buildah manifest create list
 for manifest in /buildoutput/*/image/manifest.json ; do
 	buildah manifest add list dir:$(dirname ${manifest})
 done

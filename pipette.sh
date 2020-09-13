@@ -31,4 +31,4 @@ done
 
 # Build the multi-arch image using the per-arch images.
 podman run --rm -it -v $(pwd)/build/output:/buildoutput:z ${IMAGE} /pipette-list.sh
-skopeo inspect --raw dir:build/list | jq
+skopeo inspect --raw dir:build/output/list | jq
