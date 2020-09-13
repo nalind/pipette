@@ -45,7 +45,7 @@ for arch in ${ARCH:-aarch64 ppc64le s390x x86_64} ; do
 
 	mkisofs -o ${iso} -input-charset default -volid cidata -J -r ${workdir}/cloud-init
 
-	qemu-system-${qemuarch} -m 1536 ${machineargs} -smp sockets=2,cores=2 \
+	qemu-system-${qemuarch} -m 2048 ${machineargs} -smp sockets=2,cores=2 \
 		-device virtio-9p-pci,fsdev=output,mount_tag=output \
 		-fsdev local,path=${buildoutput},id=output,security_model=none \
 		-device virtio-9p-pci,fsdev=context,mount_tag=context \
@@ -54,8 +54,8 @@ for arch in ${ARCH:-aarch64 ppc64le s390x x86_64} ; do
 		-usb -uuid ${uuid} -rtc base=utc -msg timestamp=on \
 		-hda /Fedora-Cloud-Base-32-1.6.${fedoraarch}.qcow2 -cdrom ${iso} -display none
 done
-buildah manifest create list
-for manifest in /buildoutput/*/image/manifest.json ; do
-	buildah manifest add list dir:$(dirname ${manifest})
-done
-buildah manifest push --all list dir:/buildoutput/list/
+if test -z "${ARCH}" ; then
+	buildah manifest create list
+	buildah manifest add list dir:${buildoutput}/image/
+	buildah manifest push --all list dir:/${buildoutput}/list/
+fi

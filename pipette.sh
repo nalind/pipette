@@ -1,9 +1,7 @@
 #!/bin/bash
 set -ex
 
-# Build the builder.
 IMAGE=quay.io/nalind/pipette
-# podman build -t ${IMAGE} pipette
 
 # Check out the build context.
 REPOSITORY=${REPOSITORY:-https://github.com/containers/buildah}

@@ -7,8 +7,6 @@ ADD https://download.fedoraproject.org/pub/fedora-secondary/releases/${FEDORA}/C
 ADD https://download.fedoraproject.org/pub/fedora/linux/releases/${FEDORA}/Cloud/x86_64/images/Fedora-Cloud-Base-${FEDORA}-${VERSION}.x86_64.qcow2 /
 RUN microdnf -y install buildah genisoimage git golang jq qemu skopeo && microdnf clean all
 ADD pipette-arch.sh pipette-list.sh /
-ENV STORAGE_DRIVER vfs
-ENV ARCH=x86_64
 ENV DOCKERFILE=Dockerfile
 ENV BUILDCONTEXT=/buildcontext
 ENV BUILDOUTPUT=/buildoutput
