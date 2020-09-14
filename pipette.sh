@@ -6,7 +6,7 @@ IMAGE=quay.io/nalind/pipette
 # Check out the build context.
 REPOSITORY=${REPOSITORY:-https://github.com/containers/buildah}
 VERSION=${VERSION:-v1.16.1}
-DOCKERFILE=contrib/buildahimage/stable/Dockerfile
+DOCKERFILE=${DOCKERFILE:-contrib/buildahimage/stable/Dockerfile}
 mkdir -p build/context build/output
 podman run --rm -it -v $(pwd)/build/context:/buildcontext:z ${IMAGE} git clone ${REPOSITORY} /buildcontext
 podman run --rm -it -v $(pwd)/build/context:/buildcontext:z ${IMAGE} sh -c "cd /buildcontext; git checkout ${VERSION}"
