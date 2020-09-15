@@ -15,17 +15,17 @@ podman run --rm -it -v "$(pwd)"/build/context:/buildcontext:z ${IMAGE} git clone
 podman run --rm -it -v "$(pwd)"/build/context:/buildcontext:z ${IMAGE} sh -c "cd /buildcontext; git checkout ${VERSION}"
 
 # Start builds of the per-arch payload images.
-: > build/cid.txt
+: > build/output/cid.txt
 for arch in ${ARCH:-aarch64 ppc64le s390x x86_64}; do
-	if ! test -s build/cid-${arch}.txt ; then
-		podman run -d --cidfile build/cid-${arch}.txt -v $(pwd)/build/context:/buildcontext:z -v $(pwd)/build/output:/buildoutput:z -e ARCH="${arch}" -e BUILDCONTEXT=/buildcontext -e BUILDOUTPUT=/buildoutput -e DOCKERFILE="${DOCKERFILE}" ${IMAGE} /build-arch.sh
+	if ! test -s build/output/cid-${arch}.txt ; then
+		podman run -d --cidfile build/output/cid-${arch}.txt -v $(pwd)/build/context:/buildcontext:z -v $(pwd)/build/output:/buildoutput:z -e ARCH="${arch}" -e BUILDCONTEXT=/buildcontext -e BUILDOUTPUT=/buildoutput -e DOCKERFILE="${DOCKERFILE}" ${IMAGE} /build-arch.sh
 	fi
-	cat build/cid-${arch}.txt >> build/cid.txt
-	echo " "                  >> build/cid.txt
+	cat build/output/cid-${arch}.txt >> build/output/cid.txt
+	echo " "                  >> build/output/cid.txt
 done
 
 # Wait for the builds to complete.
-for cid in $(cat build/cid.txt) ; do
+for cid in $(cat build/output/cid.txt) ; do
 	podman wait $cid
 done
 

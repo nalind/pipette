@@ -21,7 +21,7 @@ for arch in ${ARCH:-aarch64 ppc64le s390x x86_64} ; do
 	dockerfile=${DOCKERFILE:-${buildcontext}/Dockerfile}
 
 	# Build the data for the cloud-init NoCloud provider.
-	mkdir -p ${workdir}/cloud-init ${buildcontext} ${buildoutput}
+	mkdir -p ${workdir}/cloud-init ${buildcontext} ${buildoutput}/${arch}
 
 	tee ${workdir}/cloud-init/meta-data <<- EOF
 	instance-id: ${uuid}-${fedoraarch}
