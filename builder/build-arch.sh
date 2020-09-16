@@ -57,7 +57,7 @@ for arch in ${ARCH:-aarch64 ppc64le s390x x86_64} ; do
 	esac
 
 	# Start the VM.  The cloud-init script tells it to stop when it's done.
-	qemu-system-${qemuarch} -m 2048 ${machineargs} -smp sockets=2,cores=2 \
+	qemu-system-${qemuarch} -m ${MEMORY:-2048} ${machineargs} -smp sockets=2,cores=2 \
 		-device virtio-9p-pci,fsdev=output,mount_tag=output \
 		-fsdev local,path=${buildoutput}/${arch},id=output,security_model=none \
 		-device virtio-9p-pci,fsdev=context,mount_tag=context \
